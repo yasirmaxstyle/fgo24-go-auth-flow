@@ -63,7 +63,7 @@ func inputPassLogin() {
 			clear()
 			forgot()
 		} else if choice == 2 {
-			clear()
+			fmt.Print("\033[1A\033[K")
 			inputPassLogin()
 		} else if choice == 3 {
 			os.Exit(0)
