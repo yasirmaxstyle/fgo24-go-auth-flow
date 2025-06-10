@@ -1,10 +1,19 @@
 package utils
 
-import "fmt"
+import (
+	"fmt"
+)
 
-var newpassword string
+var newPassword string
 
 func forgot() {
 	fmt.Print("Enter your new password: ")
-	fmt.Scanln(&newpassword)
+	fmt.Scanln(&newPassword)
+
+	newPassword = hashPassword(newPassword)
+	dataUser[index].password = newPassword
+
+	redirecting("Reset password is successfull. Redirecting to login page...")
+
+	login()
 }
