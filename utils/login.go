@@ -1,6 +1,8 @@
 package utils
 
 import (
+	"crypto/md5"
+	"encoding/hex"
 	"fmt"
 	"os"
 )
@@ -14,15 +16,34 @@ func inputChoice(message string) {
 	fmt.Scanln(&choice)
 }
 
+func hashPassword(password string) string {
+	hash := md5.Sum([]byte(password))
+	return hex.EncodeToString(hash[:])
+}
+
+var index int
+
 func inputNameLogin() {
 	fmt.Print("Enter your name: ")
 	fmt.Scanln(&dataLogin.username)
-	if dataLogin.username != dataUser.username {
+
+	isRegistered := false
+
+	for x := range dataUser {
+		if dataUser[x].username == dataLogin.username {
+			index = x
+			isRegistered = true
+		}
+	}
+
+	if !isRegistered {
 		inputChoice("This name is not registered. Please go to registration or try again!\n1. Register\n2. Try again\n3. Exit\n")
 		if choice == 1 {
-			Auth()
+			clear()
+			register()
 		} else if choice == 2 {
-			inputNameLogin()
+			clear()
+			login()
 		} else if choice == 3 {
 			os.Exit(0)
 		} else {
@@ -34,11 +55,15 @@ func inputNameLogin() {
 func inputPassLogin() {
 	fmt.Print("Enter your password: ")
 	fmt.Scanln(&dataLogin.password)
-	if dataLogin.password != dataUser.password {
+
+	dataLogin.password = hashPassword(dataLogin.password)
+	if dataLogin.password != dataUser[index].password {
 		inputChoice("Your password is wrong. You can reset or try again!\n1. Reset\n2. Try again\n3. Exit\n")
 		if choice == 1 {
+			clear()
 			forgot()
 		} else if choice == 2 {
+			clear()
 			inputPassLogin()
 		} else if choice == 3 {
 			os.Exit(0)
@@ -49,6 +74,13 @@ func inputPassLogin() {
 }
 
 func login() {
+	fmt.Println("-----SIGN IN-----")
 	inputNameLogin()
+
 	inputPassLogin()
+	clear()
+
+	redirecting("Login is successful, redirecting to home page...")
+
+	home()
 }
